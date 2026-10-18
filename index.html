@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Buch-Cockpit</title>
+  <meta name="description" content="Projektübersicht für das Buch über die Êzîden">
+  <meta name="theme-color" content="#f6f1e7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#16130f" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Buch-Cockpit">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Anmeldung / Einrichtung -->
+  <section id="gate" class="gate" hidden>
+    <div class="gate-card">
+      <div class="sun" aria-hidden="true"></div>
+      <h1>Buch-Cockpit</h1>
+      <p class="muted">Das große Buch über die Êzîden</p>
+
+      <div id="gate-setup" hidden>
+        <p>Einmalige Einrichtung: Füge hier die <b>OAuth-Client-ID</b> aus der Google Cloud Console ein.</p>
+        <input id="client-id-input" type="text" inputmode="url" autocomplete="off" spellcheck="false"
+               placeholder="123456-abc.apps.googleusercontent.com">
+        <button id="save-client-id" class="btn primary">Speichern</button>
+      </div>
+
+      <div id="gate-login" hidden>
+        <button id="login-btn" class="btn primary">Mit Google anmelden</button>
+        <p class="small muted">Nur das freigegebene Projektkonto hat Zugriff.</p>
+      </div>
+
+      <div id="gate-folder" hidden>
+        <p>Füge einmalig den <b>Link zu deinem Projektordner</b> in Google Drive ein.<br>
+          <span class="small muted">In Drive: Ordner öffnen → Link aus der Adresszeile kopieren. Der Link bleibt nur auf diesem Gerät.</span></p>
+        <input id="folder-input" type="url" autocomplete="off" spellcheck="false"
+               placeholder="https://drive.google.com/drive/folders/…">
+        <button id="save-folder" class="btn primary">Ordner verbinden</button>
+      </div>
+
+      <p id="gate-error" class="error" hidden></p>
+      <p class="small"><a href="?demo">Demo ohne Anmeldung ansehen</a></p>
+    </div>
+  </section>
+
+  <!-- App -->
+  <div id="app" hidden>
+    <header class="topbar">
+      <div>
+        <h1 id="view-title">Übersicht</h1>
+        <p class="small muted" id="last-loaded">–</p>
+      </div>
+      <div class="topbar-actions">
+        <button id="refresh-btn" class="icon-btn" aria-label="Aktualisieren" title="Aktualisieren">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></svg>
+        </button>
+        <button id="menu-btn" class="icon-btn" aria-label="Konto" title="Konto">
+          <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div id="banner" class="banner" hidden></div>
+
+    <main>
+      <section id="view-overview" class="view"></section>
+      <section id="view-chapters" class="view" hidden></section>
+      <section id="view-tasks" class="view" hidden></section>
+      <section id="view-messages" class="view" hidden></section>
+    </main>
+
+    <nav class="tabbar">
+      <button data-view="overview" class="active">
+        <svg viewBox="0 0 24 24"><path d="M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        <span>Übersicht</span>
+      </button>
+      <button data-view="chapters">
+        <svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h5v17H6a2 2 0 0 0-2 2zM20 5a2 2 0 0 0-2-2h-5v17h5a2 2 0 0 1 2 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        <span>Kapitel</span>
+      </button>
+      <button data-view="tasks">
+        <svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Aufgaben</span>
+      </button>
+      <button data-view="messages">
+        <svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        <span>Nachrichten</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Detailansicht -->
+  <dialog id="sheet" class="sheet">
+    <div class="sheet-head">
+      <h2 id="sheet-title"></h2>
+      <button class="icon-btn" id="sheet-close" aria-label="Schließen">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div id="sheet-body" class="sheet-body"></div>
+  </dialog>
+
+  <script src="config.js"></script>
+  <script src="demo-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
